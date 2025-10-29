@@ -13,21 +13,39 @@ struct TodosView: View {
     @State private var selectedTodo: Todo?
 
     var body: some View {
-        
         List {
             Section {
                 todoList
             } header: {
-                VStack {
-                    SearchBarView(searchText: $vm.searchText)
-                    
-                }
-                
+                SearchBarView(searchText: $vm.searchText)
             }
         }
         .padding(.horizontal, -8)
         .listStyle(.plain)
+        
+        // Toolbar
         .navigationTitle("Задачи")
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                Spacer()
+                Text(vm.todos.isEmpty ? "Задач нет" : "\(vm.todos.count) Задач")
+                    .font(.subheadline)
+                Spacer()
+                NavigationLink {
+                    NewTodoView()
+                        .environmentObject(vm)
+                } label: {
+                    Image(systemName: "square.and.pencil")
+                        .resizable()
+                        .frame(width: 27, height: 27)
+                        .foregroundStyle(Color.myYellow)
+                        .padding()
+                }
+            }
+        }
+        .toolbarBackground(.visible, for: .bottomBar)
+        .toolbarBackground(Color.myGray, for: .bottomBar)
+
     }
 }
 

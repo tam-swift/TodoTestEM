@@ -27,7 +27,6 @@ struct NewTodoView: View {
             TextField("Заголовок", text: $title)
                 .font(.largeTitle)
                 .fontWeight(.semibold)
-                
             Text(currentTodo?.addDate.dateFormatter() ?? Date().dateFormatter())
                 .font(.subheadline)
                 .foregroundStyle(.gray)
@@ -48,61 +47,69 @@ struct NewTodoView: View {
             Spacer()
         }
         .padding()
+        
+        .onAppear{ getTodoField() }
+        
+        // Toolbar
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                HStack {
-                    Image(systemName: "chevron.left")
-                        .fontWeight(.semibold)
-                    Text("Назад")
-                        .font(.title3)
-                }
-                .onTapGesture {
-                    dismiss()
-                }
-                .foregroundStyle(.myYellow)
-                .padding(.leading, -12)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    withAnimation(.spring()) {
-                        if let todo = currentTodo {
-                            vm.saveTodo(todo: todo,
-                                        name: title,
-                                        description: description)
-                        } else {
-                            vm.addTodo(name: title,
-                                       description: description)
-                        }
-                    }
-                    dismiss()
-                }) {
-                    Text(currentTodo != nil ? "Сохранить" : "Добавить")
-                        .font(.title3)
-                        .foregroundStyle(.myYellow)
-                        .padding(.trailing, 12)
-                        .opacity(saveButtonDisabled() ? 0.3 : 1)
-                }
-                .disabled(saveButtonDisabled())
-            }
+            ToolbarItem(placement: .topBarLeading) { backButton }
+            ToolbarItem(placement: .topBarTrailing) { saveButton }
         }
         .navigationBarBackButtonHidden(true)
-        .onAppear {
-            if let todoId = todoId
-            {
-                currentTodo = vm.getTodo(by: todoId)
-                title = currentTodo?.todo ?? ""
-                description = currentTodo?.description ?? ""
-            }
-
-        }
-    }
         
+    }
+    
+    private var backButton: some View {
+        HStack {
+            Image(systemName: "chevron.left")
+                .fontWeight(.semibold)
+            Text("Назад")
+                .font(.title3)
+        }
+        .onTapGesture {
+            dismiss()
+        }
+        .foregroundStyle(.myYellow)
+        .padding(.leading, -12)
+    }
+    
+    private var saveButton: some View {
+        Button(action: {
+            withAnimation(.spring()) {
+                if let todo = currentTodo {
+                    vm.saveTodo(todo: todo,
+                                name: title,
+                                description: description)
+                } else {
+                    vm.addTodo(name: title,
+                               description: description)
+                }
+            }
+            dismiss()
+        }) {
+            Text(currentTodo != nil ? "Сохранить" : "Добавить")
+                .font(.title3)
+                .foregroundStyle(.myYellow)
+                .padding(.trailing, 12)
+                .opacity(saveButtonDisabled() ? 0.3 : 1)
+        }
+        .disabled(saveButtonDisabled())
+    }
     
     private func saveButtonDisabled() -> Bool {
         guard let todo = currentTodo else {
             return title.isEmpty || description.isEmpty
         }
         return (title == todo.todo && description == todo.description ?? "") || title.isEmpty
+    }
+    
+    private func getTodoField() {
+        if let todoId = todoId
+        {
+            currentTodo = vm.getTodo(by: todoId)
+            title = currentTodo?.todo ?? ""
+            description = currentTodo?.description ?? ""
+        }
     }
 }
 

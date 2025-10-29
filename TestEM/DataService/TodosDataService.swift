@@ -68,10 +68,6 @@ class TodosDataService {
         return output.data
     }
     
-    private func rootClassToTodo(rootClass: Root) -> [Todo] {
-        rootClass.todos
-    }
-    
     func cancel() {
         todoSubs?.cancel()
     }

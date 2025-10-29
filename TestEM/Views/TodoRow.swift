@@ -21,25 +21,10 @@ struct TodoRow: View {
     var body: some View {
         
         HStack(alignment: .top, spacing: 17) {
-            Image(systemName: todo.completed ? "checkmark.circle" :"circle")
-                .resizable()
-                .frame(width: 25, height: 25)
-                .foregroundStyle(todo.completed ? .myYellow : .gray)
-                .fontWeight(.light)
-                .padding(.top, 2)
-            VStack(alignment: .leading, spacing: 5) {
-                Text(todo.todo)
-                    .strikethrough(todo.completed)
-                    .font(.title3)
-                    .fontWeight(.medium)
-                Text(todo.description ?? "Описание пусто")
-                    .font(.subheadline)
-                Text(todo.addDate.dateFormatter())
-                    .font(.subheadline)
-                    .foregroundStyle(.gray)
-            }
+            checkmarkImage
+            todoInfoVStack
         }
-        
+        .foregroundStyle(todo.completed ? .gray : .accent )
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 10)
         .background(
@@ -52,9 +37,24 @@ struct TodoRow: View {
                 vm.switchCompleted(todo: todo)
             }
         }
-        .foregroundStyle(todo.completed ? .gray : .accent )
-        .contextMenu {
-            
+        
+        .contextMenu{ contextMenuButtons }
+    }
+}
+#Preview {
+    NavigationStack {
+        List {
+            TodoRow(selectedTodo: .constant(PreviewSupport.instance.todos[1]), todo: PreviewSupport.instance.todos[1])
+                .environmentObject(TodosViewModel())
+        }
+        .listStyle(.plain)
+    }
+}
+
+extension TodoRow {
+    
+    private var contextMenuButtons: some View {
+        Group {
             NavigationLink {
                 NewTodoView(todoId: todo.id)
                     .environmentObject(vm)
@@ -75,22 +75,30 @@ struct TodoRow: View {
                 Label("Удалить", systemImage: "trash")
             }
         }
-        
-    }
-}
-#Preview {
-    NavigationStack {
-        List {
-            TodoRow(selectedTodo: .constant(PreviewSupport.instance.todos[1]), todo: PreviewSupport.instance.todos[1])
-                .environmentObject(TodosViewModel())
-        }
-        .listStyle(.plain)
-    }
-}
-
-struct Aboba : View {
-    var body: some View {
-        Text("Привед")
     }
     
+    private var checkmarkImage: some View {
+        Image(systemName: todo.completed ? "checkmark.circle" :"circle")
+            .resizable()
+            .frame(width: 25, height: 25)
+            .foregroundStyle(todo.completed ? .myYellow : .gray)
+            .fontWeight(.light)
+            .padding(.top, 2)
+    }
+    
+    private var todoInfoVStack: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(todo.todo)
+                .strikethrough(todo.completed)
+                .font(.title3)
+                .fontWeight(.medium)
+                .lineLimit(1)
+            Text(todo.description ?? "Описание пусто")
+                .font(.subheadline)
+                .lineLimit(2)
+            Text(todo.addDate.dateFormatter())
+                .font(.subheadline)
+                .foregroundStyle(.gray)
+        }
+    }
 }

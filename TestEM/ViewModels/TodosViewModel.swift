@@ -72,10 +72,4 @@ class TodosViewModel: ObservableObject {
                               userId: 20,
                               description: description))
     }
-    
-    func deleteAllTodos() {
-        guard !todos.isEmpty else { return }
-            todos.removeAll()
-        
-    }
 }
