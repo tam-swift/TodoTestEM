@@ -31,8 +31,12 @@ struct Todo: Identifiable, Codable{
     var completed: Bool
     let userId: Int
     
-    let addDate: Date = Date()
+    var addDate: Date = Date()
     var description: String?
+    
+    enum CodingKeys: String, CodingKey {
+         case id, todo, completed, userId
+     }
 }
 
 struct Root: Codable {

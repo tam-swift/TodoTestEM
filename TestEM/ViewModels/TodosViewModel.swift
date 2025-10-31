@@ -13,63 +13,74 @@ class TodosViewModel: ObservableObject {
     @Published var todos: [Todo] = []
     @Published var searchText: String = ""
     
-    private let todosDataService = TodosDataService()
-    
+    private let todoDataService = TodoDataService()
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        addSubs()
+        addSubscribers()
     }
     
-    private func addSubs() {
+    // MARK: - PRIVATE
+    private func addSubscribers() {
+        
+        // Subscribe to search text
         $searchText
-            .combineLatest(todosDataService.$allTodos)
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .map { text, todos -> [Todo] in
-                guard text != "" else { return todos }
-                let lowercasedText = text.lowercased()
-                return todos.filter { todo in
-                    todo.todo.lowercased().contains(lowercasedText) ||
-                    ((todo.description?.lowercased().contains(lowercasedText)) != nil)
-                }
-            }
-            .sink { [weak self] returnedTodos in
-                self?.todos = returnedTodos
+            .combineLatest(todoDataService.$allTodos)
+            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+            .map(filterAndMapTodos)
+            .sink { [weak self] filteredTodos in
+                self?.todos = filteredTodos
             }
             .store(in: &cancellables)
         
-        $todos
-            .combineLatest(todosDataService.$allTodos)
-            .map {$0.1}
-            .sink { [weak self] todos in
-                self?.todos = todos
-            }
-            .store(in: &cancellables)
+    }
+    
+    private func filterAndMapTodos(searchText: String, todoEntities: [TodoEntity]) -> [Todo] {
+        let todos = todoEntities.map { entity in
+            Todo(
+                id: Int(entity.id),
+                todo: entity.todo ?? "",
+                completed: entity.completed,
+                userId: Int(entity.userId),
+                addDate: entity.addDate ?? Date(),
+                description: entity.description_
+            )
+        }
+        
+        guard !searchText.isEmpty else { return todos }
+        
+        let lowercasedText = searchText.lowercased()
+        return todos.filter { todo in
+            todo.todo.lowercased().contains(lowercasedText) ||
+            (todo.description?.lowercased().contains(lowercasedText) ?? false)
+        }
+    }
+    
+    // MARK: - PUBLIC
+    func addTodo(title: String, description: String?) {
+        todoDataService.addTodo(title: title, description: description)
+    }
+    
+    func updateTodo(_ todo: Todo, title: String? = nil, description: String? = nil) {
+        if let entity = todoDataService.allTodos.first(where: { $0.id == Int64(todo.id) }) {
+            todoDataService.updateTodo(entity, title: title, description: description)
+        }
+    }
+    
+    func toggleCompleted(_ todo: Todo) {
+        if let entity = todoDataService.allTodos.first(where: { $0.id == Int64(todo.id) }) {
+            todoDataService.toggleCompleted(entity)
+        }
+    }
+    
+    func deleteTodo(_ todo: Todo) {
+        if let entity = todoDataService.allTodos.first(where: { $0.id == Int64(todo.id) }) {
+            todoDataService.deleteTodo(entity)
+        }
     }
     
     func getTodo(by id: Int) -> Todo? {
         return todos.first { $0.id == id }
     }
     
-    func switchCompleted(todo: Todo) {
-        guard let index = todos.firstIndex(where: {$0.id == todo.id}) else { return }
-        todos[index].completed.toggle()
-    }
-    func deleteTodo(todo: Todo) {
-        guard let index = todos.firstIndex(where: {$0.id == todo.id}) else { return }
-        todos.remove(at: index)
-    }
-    
-    func saveTodo(todo: Todo, name: String, description: String?) {
-        guard let index = todos.firstIndex(where: {$0.id == todo.id}) else { return }
-            todos[index].todo = name
-            todos[index].description = description
-    }
-    func addTodo(name: String, description: String?) {
-            todos.append(Todo(id: UUID().hashValue,
-                              todo: name,
-                              completed: false,
-                              userId: 20,
-                              description: description))
-    }
 }

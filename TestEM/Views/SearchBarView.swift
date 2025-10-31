@@ -17,16 +17,20 @@ struct SearchBarView: View {
                 .frame(height: 45)
                 .foregroundStyle(.myGray)
             TextField("", text: $searchText)
-                .placeholder(when: searchText.isEmpty) {
-                    Text("Search")
-                        .foregroundStyle(.gray)
-                        .font(.title3)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 45)
+                .font(.system(size: 18))
+                .overlay(alignment: .topLeading) {
+                    if searchText.isEmpty {
+                        Text("Search")
+                            .foregroundColor(.gray)
+                            .font(.system(size: 20))
+                            .padding(.leading, 45)
+                            .allowsHitTesting(false)
+                    }
                 }
-                .padding(.leading, 40)
                 .overlay(
                     Image(systemName: "magnifyingglass")
-                        .font(.headline)
+                        .font(.system(size: 20))
                         .padding(.leading, 13)
                         .foregroundStyle(.gray)
                     , alignment: .leading
@@ -34,10 +38,9 @@ struct SearchBarView: View {
             
                 .overlay(
                     Image(systemName: "microphone.fill")
-                        .font(.headline)
+                        .font(.system(size: 20))
                         .padding(.trailing)
                         .foregroundStyle(.gray)
-
                     ,alignment: .trailing
                 )
         }

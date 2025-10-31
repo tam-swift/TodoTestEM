@@ -40,7 +40,6 @@ struct NewTodoView: View {
                     if description.isEmpty {
                         Text("Описание")
                             .foregroundColor(.gray)
-                            .padding(.top, 8)
                             .allowsHitTesting(false)
                     }
                 }
@@ -77,11 +76,11 @@ struct NewTodoView: View {
         Button(action: {
             withAnimation(.spring()) {
                 if let todo = currentTodo {
-                    vm.saveTodo(todo: todo,
-                                name: title,
+                    vm.updateTodo(todo,
+                                  title: title,
                                 description: description)
                 } else {
-                    vm.addTodo(name: title,
+                    vm.addTodo(title: title,
                                description: description)
                 }
             }

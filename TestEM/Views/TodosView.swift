@@ -10,7 +10,6 @@ import SwiftUI
 struct TodosView: View {
     
     @EnvironmentObject private var vm: TodosViewModel
-    @State private var selectedTodo: Todo?
 
     var body: some View {
         List {
@@ -59,7 +58,7 @@ struct TodosView: View {
 extension TodosView {
     private var todoList: some View {
         ForEach(vm.todos) { todo in
-            TodoRow(selectedTodo: $selectedTodo, todo: todo)
+            TodoRow(todo: todo)
         }
         
     }

@@ -13,9 +13,6 @@ struct TodoRow: View {
     
     @EnvironmentObject var vm: TodosViewModel
     
-    @State private var isLongPressing = false
-    @Binding var selectedTodo: Todo?
-    
     let todo: Todo
     
     var body: some View {
@@ -34,7 +31,7 @@ struct TodoRow: View {
         )
         .onTapGesture {
             withAnimation(.spring()) {
-                vm.switchCompleted(todo: todo)
+                vm.toggleCompleted(todo)
             }
         }
         
@@ -44,7 +41,7 @@ struct TodoRow: View {
 #Preview {
     NavigationStack {
         List {
-            TodoRow(selectedTodo: .constant(PreviewSupport.instance.todos[1]), todo: PreviewSupport.instance.todos[1])
+            TodoRow(todo: PreviewSupport.instance.todos[1])
                 .environmentObject(TodosViewModel())
         }
         .listStyle(.plain)
@@ -61,15 +58,12 @@ extension TodoRow {
             } label: {
                 Label("Редактировать",systemImage: "square.and.pencil")
             }
-
-            Button(action :{
-                
-            }) {
-                Label("Поделиться", systemImage: "square.and.arrow.up")
+            ShareLink(item: "\(todo.todo)\n\n\(todo.description ?? "")") {
+            Label("Поделиться", systemImage: "square.and.arrow.up")
             }
             Button(role: .destructive ,action :{
                 withAnimation(.spring) {
-                    vm.deleteTodo(todo: todo)
+                    vm.deleteTodo(todo)
                 }
             }) {
                 Label("Удалить", systemImage: "trash")
