@@ -68,12 +68,22 @@ class TodosViewModel: ObservableObject {
     }
     
     func toggleCompleted(_ todo: Todo) {
+        
+        if let index = todos.firstIndex(where: { $0.id == todo.id }) {
+                    var updatedTodo = todos[index]
+                    updatedTodo.completed.toggle()
+                    todos[index] = updatedTodo
+        }
+                
         if let entity = todoDataService.allTodos.first(where: { $0.id == Int64(todo.id) }) {
             todoDataService.toggleCompleted(entity)
         }
     }
     
     func deleteTodo(_ todo: Todo) {
+        
+        todos.removeAll { $0.id == todo.id }
+        
         if let entity = todoDataService.allTodos.first(where: { $0.id == Int64(todo.id) }) {
             todoDataService.deleteTodo(entity)
         }
@@ -82,5 +92,9 @@ class TodosViewModel: ObservableObject {
     func getTodo(by id: Int) -> Todo? {
         return todos.first { $0.id == id }
     }
+    
+    func refreshTodos() {
+            todoDataService.getTodos()
+        }
     
 }
