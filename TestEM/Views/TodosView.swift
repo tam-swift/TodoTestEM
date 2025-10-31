@@ -12,16 +12,18 @@ struct TodosView: View {
     @EnvironmentObject private var vm: TodosViewModel
 
     var body: some View {
-        List {
-            Section {
-                todoList
-            } header: {
-                SearchBarView(searchText: $vm.searchText)
-            }
-        }
-        .padding(.horizontal, -8)
-        .listStyle(.plain)
         
+        VStack(spacing: 0) {
+            SearchBarView(searchText: $vm.searchText)
+                .padding(.horizontal, 10)
+            List {
+                todoList
+                    .padding(.vertical, -2)
+            }
+            .listStyle(.plain)
+            .scrollDismissesKeyboard(.immediately)
+        }
+       
         // Toolbar
         .navigationTitle("Задачи")
         .toolbar {
@@ -59,6 +61,7 @@ extension TodosView {
     private var todoList: some View {
         ForEach(vm.todos) { todo in
             TodoRow(todo: todo)
+                .listRowSeparatorTint(.gray)
         }
         
     }

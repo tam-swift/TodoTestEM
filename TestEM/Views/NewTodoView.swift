@@ -40,6 +40,9 @@ struct NewTodoView: View {
                     if description.isEmpty {
                         Text("Описание")
                             .foregroundColor(.gray)
+                            .padding(.top, 10)
+                            .padding(.leading, 5)
+                            .font(.system(size: 19, weight: .regular))
                             .allowsHitTesting(false)
                     }
                 }
