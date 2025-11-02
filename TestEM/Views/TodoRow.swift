@@ -36,10 +36,6 @@ struct TodoRow: View {
         }
         
         .contextMenu{ contextMenuButtons }
-        
-        .onAppear {
-            vm.refreshTodos()
-        }
     }
 }
 #Preview {

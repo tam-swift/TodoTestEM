@@ -83,7 +83,7 @@ struct NewTodoView: View {
                                   title: title,
                                 description: description)
                 } else {
-                    vm.addTodo(title: title,
+                    vm.addTodo(todo: title,
                                description: description)
                 }
             }
