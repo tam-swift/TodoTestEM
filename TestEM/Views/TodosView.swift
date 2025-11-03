@@ -16,12 +16,7 @@ struct TodosView: View {
         VStack(spacing: 0) {
             SearchBarView(searchText: $vm.searchText)
                 .padding(.horizontal, 10)
-            List {
-                todoList
-                    .padding(.vertical, -2)
-            }
-            .listStyle(.plain)
-            .scrollDismissesKeyboard(.immediately)
+            todoList
         }
        
         // Toolbar
@@ -59,10 +54,14 @@ struct TodosView: View {
 
 extension TodosView {
     private var todoList: some View {
-        ForEach(vm.todos) { todo in
-            TodoRow(todo: todo)
-                .listRowSeparatorTint(.gray)
+        List {
+            ForEach(vm.todos) { todo in
+                TodoRow(todo: todo)
+                    .listRowSeparatorTint(.gray)
+            }
+            .padding(.vertical, -2)
         }
-        
+        .listStyle(.plain)
+        .scrollDismissesKeyboard(.immediately)
     }
 }

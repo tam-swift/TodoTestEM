@@ -21,4 +21,6 @@ class PreviewSupport {
              completed: true,
              userId: 20,
              description: "Яйца, молоко, хлеб")]
+    
+    private init() {}
 }

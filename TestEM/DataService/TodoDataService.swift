@@ -17,8 +17,8 @@ class TodoDataService: DataService {
     
     @Published var allTodos: [TodoEntity] = []
     var allTodosPublisher: AnyPublisher<[TodoEntity], Never> {
-            $allTodos.eraseToAnyPublisher()
-        }
+        $allTodos.eraseToAnyPublisher()
+    }
 
     init() {
         container = NSPersistentContainer(name: containerName)

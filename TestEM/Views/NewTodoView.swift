@@ -12,7 +12,7 @@ struct NewTodoView: View {
     @EnvironmentObject private var vm: TodosViewModel
     @Environment(\.dismiss) private var dismiss
     
-    let todoId: Int?
+    private let todoId: Int?
     @State private var title: String = ""
     @State private var description: String = ""
 
@@ -100,7 +100,7 @@ struct NewTodoView: View {
     
     private func saveButtonDisabled() -> Bool {
         guard let todo = currentTodo else {
-            return title.isEmpty || description.isEmpty
+            return title.isEmpty 
         }
         return (title == todo.todo && description == todo.description ?? "") || title.isEmpty
     }
@@ -119,7 +119,7 @@ struct NewTodoView: View {
 #Preview {
     NavigationStack {
         NewTodoView(todoId: 0)
-             .environmentObject(TodosViewModel()) // ⭐️ Явно передаем
+             .environmentObject(TodosViewModel()) 
     }
 }
 

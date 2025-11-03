@@ -49,7 +49,6 @@ class TodosViewModel: ObservableObject {
                        description: entity.description_
                    )
                }
-               
                let filteredTodos: [Todo]
                
                if searchText.isEmpty {
@@ -80,22 +79,19 @@ class TodosViewModel: ObservableObject {
     }
     
     func toggleCompleted(_ todo: Todo) {
-        
         if let index = todos.firstIndex(where: { $0.id == todo.id }) {
-                    var updatedTodo = todos[index]
-                    updatedTodo.completed.toggle()
-                    todos[index] = updatedTodo
+            var updatedTodo = todos[index]
+            updatedTodo.completed.toggle()
+            todos[index] = updatedTodo
         }
-                
+        
         if let entity = todoDataService.allTodos.first(where: { $0.id == Int64(todo.id) }) {
             todoDataService.toggleCompleted(entity)
         }
     }
     
     func deleteTodo(_ todo: Todo) {
-        
         todos.removeAll { $0.id == todo.id }
-        
         if let entity = todoDataService.allTodos.first(where: { $0.id == Int64(todo.id) }) {
             todoDataService.deleteTodo(entity)
         }
